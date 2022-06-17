@@ -27,6 +27,29 @@ exports.create = (req,res,next) =>{
         })
     })
 }
+
+//login
+exports.login = (req,res,next) => {
+    BankingCustomerModel.findOne({email : req.body.email}, (err,result) => {
+        if(err){       
+             next(err)
+             console.log("invalid user")
+        }
+        else{
+            if(bcrypt.compareSync(req.body.password,result.password)){
+                const token = jwt.sign({id:result._id},req.app.get('secretKey'), {expiresIn:'1h'})
+                res.json({
+                    status:"Success",
+                    message:"Successfully Logged in",
+                    data: {
+                        model: result,
+                        token: token
+                    }
+                })
+            }
+        }
+    })
+}
 // Get All
 exports.getAll = (req,res,next) =>{
     BankingCustomerModel.find({},(err,result)=>{

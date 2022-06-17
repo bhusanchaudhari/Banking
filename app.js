@@ -8,6 +8,7 @@ require('dotenv').config()
 
 const app = express()
 
+
 var corsOptions = {
     origin:"http://localhost:8081"
 }
@@ -22,6 +23,19 @@ app.get('/', (req,res) => {
         message: "Welcome to the Bank"
     })
 })
+
+app.set('secretKey','hdjsakfhdjsk')
+const userValidation = (req, res,next) => {
+    jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), 
+    (err,decoded) =>{
+        if(err){
+            res.json({
+                message: err
+            })
+        }
+        next()
+    })
+}
 
 const PORT = process.env.PORT || 5000
 
